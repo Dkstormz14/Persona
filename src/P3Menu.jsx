@@ -197,7 +197,7 @@ export default function P3Menu({ onNavigate }) {
           z-index: 20;
           font-family: 'Anton', sans-serif;
           font-style: italic;
-          font-size: 108px;
+          font-size: 80px;
           line-height: 0.88;
           letter-spacing: 2px;
           color: rgba(10, 10, 14, 0.64);
