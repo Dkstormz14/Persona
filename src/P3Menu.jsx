@@ -193,7 +193,7 @@ export default function P3Menu({ onNavigate }) {
         .p3-name-tag {
           position: absolute;
           top: 18px;
-          left: 40px;
+          left: 45px;
           z-index: 20;
           font-family: 'Anton', sans-serif;
           font-style: italic;
