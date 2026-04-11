@@ -16,8 +16,8 @@ const MAIN_IMAGES = [mainm, mainm2, mainf];
 
 const REVEAL_CONTENT = [
   {
-    upper: ["name moneybagg", "age:23"],
-    lower: "major: computer science",
+    upper: ["name Davonte", "age:20"],
+    lower: "profession: Game Developer",
   },
   {
     upper: [
