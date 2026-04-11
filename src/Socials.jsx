@@ -20,7 +20,7 @@ const ROLES = [
 
 const ITEMS = [
   {
-    id: "twitch", label: "TWITCH", handle: "@yourname", href: "https://twitch.tv/yourname", icon: "🎮", barIcon: icon1, bars: 1, newBars: [0], counts: ["56"],
+    id: "linkedin", label: "LINKEDIN", handle: "@davonte-kesse", href: "https://www.linkedin.com/in/davonte-kesse-586258341/", icon: "🎮", barIcon: icon1, bars: 1, newBars: [0], counts: ["56"],
     links: ["twitch.tv/videos/2041837265"],
     stats: [
       { tag: "FOL", value: "1.2K", color: "#9147ff" },
