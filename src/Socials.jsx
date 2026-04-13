@@ -12,65 +12,48 @@ import icon3 from "./assets/icon3.png";
 const CHARS = [char1, char2, char3];
 
 const ROLES = [
-  { text: "LEADER", color: "#e8c100" },
-  { text: "PARTY",  color: "#4a8fff" },
-  { text: "PARTY",  color: "#4a8fff" },
+  { text: "LEADER" },
+  { text: "PARTY" },
+  { text: "PARTY" },
 ];
 
 const ITEMS = [
   {
     id: "linkedin",
     label: "LINKEDIN",
-    handle: "@davonte-kesse",
     href: "https://www.linkedin.com/in/davonte-kesse-586258341/",
     icon: "🎮",
     barIcon: icon1,
     bars: 1,
     newBars: [0],
     counts: ["56"],
-    links: ["https://www.linkedin.com/in/davonte-kesse-586258341/"],
-    stats: [
-      { tag: "FOL", value: "1.2K", color: "#9147ff" },
-      { tag: "VWR", value: "042",  color: "#bf94ff" },
-    ],
+    links: ["twitch.tv/videos/2041837265"],
   },
   {
     id: "instagram",
     label: "INSTAGRAM",
-    handle: "@yourhandle",
     href: "https://instagram.com/yourhandle",
     icon: "📷",
     barIcon: icon2,
-    bars: 5,
-    newBars: [1, 2],
-    counts: ["3.4M", "2.5M", "676K", "412K", "198K"],
+    bars: 3,
+    newBars: [1],
+    counts: ["3.4M", "2.5M", "676K"],
     links: [
-      "instagram.com/p/C4xQmRrNk2a",
-      "instagram.com/p/C3wLpBsOj7f",
-      "instagram.com/reel/C2vKoArMi6e",
-      "instagram.com/p/C1uJnZqLh5d",
-      "instagram.com/reel/C0tImYpKg4c"
-    ],
-    stats: [
-      { tag: "FOL", value: "3.4K", color: "#e1306c" },
-      { tag: "PST", value: "128",  color: "#f77737" },
+      "instagram.com/p/test1",
+      "instagram.com/p/test2",
+      "instagram.com/p/test3",
     ],
   },
   {
     id: "tiktok",
     label: "TIKTOK",
-    handle: "@yourhandle",
-    href: "https://tiktok.com/@yourhandle",
+    href: "https://tiktok.com",
     icon: "🎵",
     barIcon: icon3,
-    bars: 7,
-    newBars: [0, 3, 5, 6],
-    counts: ["5.1M", "3.7M", "2.2M", "1.4M", "831K", "490K", "217K"],
-    links: ["tiktok.com/@yourhandle"],
-    stats: [
-      { tag: "FOL", value: "8.9K", color: "#00f2ea" },
-      { tag: "LKS", value: "52K",  color: "#ff0050" },
-    ],
+    bars: 2,
+    newBars: [0],
+    counts: ["5.1M", "3.7M"],
+    links: ["tiktok.com/1", "tiktok.com/2"],
   },
 ];
 
@@ -81,19 +64,13 @@ export default function Socials() {
   const [focus, setFocus] = useState("left");
   const navigate = useNavigate();
 
-  const isMobileViewport =
-    typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
-
-  // ✅ FIXED LINK HANDLING
   const resolveLink = (rawLink) => {
     if (/^(https?:\/\/|mailto:)/i.test(rawLink)) return rawLink;
     return "https://" + rawLink;
   };
 
-  // ✅ CLEAN TEXT
   const formatInfoText = (text) => {
-    const maxLength = 40;
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+    return text.length > 40 ? text.slice(0, 40) + "..." : text;
   };
 
   useEffect(() => {
@@ -101,7 +78,6 @@ export default function Socials() {
     return () => clearTimeout(t);
   }, []);
 
-  // ✅ FIXED KEYBOARD SYSTEM
   useEffect(() => {
     const onKey = (e) => {
       if (focus === "left") {
@@ -113,150 +89,97 @@ export default function Socials() {
           window.open(resolveLink(ITEMS[active].href), "_blank", "noopener,noreferrer");
         }
       } else {
-        const barCount = ITEMS[active].bars;
-
         if (e.key === "ArrowUp") setActiveInfoBar(i => Math.max(0, i - 1));
-        if (e.key === "ArrowDown") setActiveInfoBar(i => Math.min(barCount - 1, i + 1));
+        if (e.key === "ArrowDown") setActiveInfoBar(i => Math.min(ITEMS[active].bars - 1, i + 1));
         if (e.key === "ArrowLeft") setFocus("left");
 
         if (e.key === "Enter") {
-          window.open(
-            resolveLink(ITEMS[active].links[activeInfoBar]),
-            "_blank",
-            "noopener,noreferrer"
-          );
+          window.open(resolveLink(ITEMS[active].links[activeInfoBar]), "_blank", "noopener,noreferrer");
         }
       }
 
-      if (
-        (e.key === "ArrowLeft" && focus === "left") ||
-        e.key === "Escape" ||
-        e.key === "Backspace"
-      ) {
-        navigate(-1);
-      }
+      if (e.key === "Escape") navigate(-1);
     };
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, activeInfoBar, navigate, focus]);
+  }, [active, activeInfoBar, focus]);
 
   return (
-    <div id="menu-screen">
-      <video src={bgVideo} autoPlay loop muted playsInline />
+    <div className="gto-social-screen">
 
-      <div className="sc-root" role="navigation">
+      {/* 🔥 FIXED VIDEO */}
+      <video
+        src={bgVideo}
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 0
+        }}
+      />
+
+      {/* 🔥 MENU */}
+      <div style={{
+        position: "absolute",
+        zIndex: 10,
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        left: "20px"
+      }}>
         {ITEMS.map((item, i) => (
           <div
-            key={item.id}
-            className={`sc-bar-outer${active === i ? " active" : ""}${mounted ? " mounted" : ""}`}
-            onClick={() => {
-              if (active === i) {
-                window.open(resolveLink(item.href), "_blank", "noopener,noreferrer");
-              } else {
-                setActive(i);
-              }
+            key={i}
+            style={{
+              background: active === i ? "#ffd230" : "#111",
+              color: active === i ? "#000" : "#fff",
+              padding: "20px 40px",
+              cursor: "pointer",
+              fontSize: "24px",
+              transition: "0.2s"
             }}
-            onMouseEnter={() => setActive(i)}
-            onFocus={() => setActive(i)}
-            tabIndex={0}
-            aria-label={active === i ? `Open ${item.label}` : `Select ${item.label}`}
-            aria-pressed={active === i}
+            onClick={() => setActive(i)}
           >
-            <div className="sc-bar-red" />
-            <div className="sc-bar">
-              <img className="sc-char" src={CHARS[i]} alt="" />
-              <div className="sc-bar-fill" />
-              <div className="sc-bar-shade" />
-
-              <div className="sc-bar-content">
-                <div className="sc-role">{ROLES[i].text}</div>
-
-                <div className="sc-main">
-                  <div className="sc-main-top">
-                    <div className="sc-icon">{item.icon}</div>
-                    <div className="sc-label">{item.label}</div>
-                  </div>
-                </div>
-
-                <div className="sc-stats">
-                  {item.stats.map(s => (
-                    <div className="sc-stat" key={s.tag}>
-                      <div className="sc-stat-top">
-                        <span className="sc-stat-tag" style={{ color: s.color, borderColor: s.color }}>
-                          {s.tag}
-                        </span>
-                        <span className="sc-stat-num">{s.value}</span>
-                      </div>
-                      <div className="sc-stat-bars">
-                        <div className="sc-stat-bar-color" style={{ background: s.color }} />
-                        <div className="sc-stat-bar-black" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            {item.icon} {item.label}
           </div>
         ))}
       </div>
 
-      {mounted && (
-        <div className="sc-right-nav">
-          <span>◄</span>
-          <span>LB</span>
-          <span>{ITEMS[active].label}</span>
-          <span>RB</span>
-          <span>►</span>
-        </div>
-      )}
-
-      {mounted && (
-        <div className="sc-info-panel">
-          {Array.from({ length: ITEMS[active].bars }).map((_, i) => (
-            <div
-              key={i}
-              className={`sc-info-bar-wrap${activeInfoBar === i ? " selected" : ""}`}
-              onClick={() => {
-                if (isMobileViewport || activeInfoBar === i) {
-                  window.open(
-                    resolveLink(ITEMS[active].links[i]),
-                    "_blank",
-                    "noopener,noreferrer"
-                  );
-                } else {
-                  setActiveInfoBar(i);
-                }
-              }}
-              onMouseEnter={() => setActiveInfoBar(i)}
-              onFocus={() => setActiveInfoBar(i)}
-              tabIndex={0}
-              aria-label={`Select link ${i + 1}`}
-              aria-pressed={activeInfoBar === i}
-            >
-              {ITEMS[active].newBars.includes(i) && (
-                <img className="sc-info-bar-new" src={newsign} alt="" />
-              )}
-
-              <div className="sc-info-bar">
-                <img className="sc-info-bar-icon" src={ITEMS[active].barIcon} alt="" />
-                <span className="sc-info-bar-text">
-                  {formatInfoText(ITEMS[active].links[i])}
-                </span>
-                <span className="sc-info-bar-box">VIEWS</span>
-                <span className="sc-info-bar-count">{ITEMS[active].counts[i]}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="sc-mobile-controls">
-        <button onClick={() => navigate(-1)}>BACK</button>
-        <button onClick={() => window.open(resolveLink(ITEMS[active].href), "_blank", "noopener,noreferrer")}>
-          OPEN
-        </button>
+      {/* 🔥 INFO PANEL */}
+      <div style={{
+        position: "absolute",
+        right: "20px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 10
+      }}>
+        {Array.from({ length: ITEMS[active].bars }).map((_, i) => (
+          <div
+            key={i}
+            style={{
+              background: activeInfoBar === i ? "#fff4cc" : "#222",
+              padding: "10px",
+              marginBottom: "6px",
+              cursor: "pointer"
+            }}
+            onClick={() => {
+              window.open(resolveLink(ITEMS[active].links[i]), "_blank");
+            }}
+          >
+            {formatInfoText(ITEMS[active].links[i])} ({ITEMS[active].counts[i]})
+          </div>
+        ))}
       </div>
+
     </div>
   );
 }
