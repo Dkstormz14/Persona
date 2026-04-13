@@ -1,79 +1,59 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import char1 from "./assets/char1.png";
 import char2 from "./assets/char2.png";
 import char3 from "./assets/char3.png";
 import bgVideo from "./assets/main3.mp4";
 import newsign from "./assets/newsign.png";
+import icon1 from "./assets/icon1.png";
+import icon2 from "./assets/icon2.png";
+import icon3 from "./assets/icon3.png";
 
-const SOCIALS_COPY = {
-  fr: {
-    labels: ["GITHUB", "LINKEDIN", "CONTACT"],
-    selectLink: "Selectionner lien",
-    itemOpen: "Ouvrir",
-    itemSelect: "Selectionner",
-    contactLine: "mailto:maelbelhacene38.pro@gmail.com - En poste jusqu'en 2028 (alternance), ouvert aux echanges techniques/collaborations ciblees",
-    footer: { select: "SÉLECTIONNER", open: "OUVRIR", back: "RETOUR" },
-  },
-  en: {
-    labels: ["GITHUB", "LINKEDIN", "CONTACT"],
-    selectLink: "Select link",
-    itemOpen: "Open",
-    itemSelect: "Select",
-    contactLine: "mailto:maelbelhacene38.pro@gmail.com - Employed until 2028 (work-study), open to technical discussions/selected collaborations",
-    footer: { select: "SELECT", open: "OPEN", back: "BACK" },
-  },
-};
 
 const CHARS = [char1, char2, char3];
 
 const ROLES = [
-  { text: "ONI", color: "#ffd230", bg: "rgba(255,210,48,0.12)", border: "rgba(255,210,48,0.5)" },
-  { text: "CREW", color: "#d32828", bg: "rgba(211,40,40,0.12)", border: "rgba(211,40,40,0.45)" },
-  { text: "ZONE", color: "#ffd230", bg: "rgba(255,210,48,0.12)", border: "rgba(255,210,48,0.5)" },
+  { text: "LEADER", color: "#e8c100", bg: "rgba(232,193,0,0.12)", border: "rgba(232,193,0,0.5)" },
+  { text: "PARTY",  color: "#4a8fff", bg: "rgba(74,143,255,0.12)", border: "rgba(74,143,255,0.5)" },
+  { text: "PARTY",  color: "#4a8fff", bg: "rgba(74,143,255,0.12)", border: "rgba(74,143,255,0.5)" },
 ];
 
 const ITEMS = [
   {
-    id: "twitch", label: "GITHUB", handle: "@mael", href: "https://github.com/MaelBelhacene", icon: "💻", bars: 1, newBars: [0],
-    links: ["github.com/MaelBelhacene"],
+    id: "linkedin", label: "LINKEDIN", handle: "@davonte-kesse", href: "https://www.linkedin.com/in/davonte-kesse-586258341/", icon: "🎮", barIcon: icon1, bars: 1, newBars: [0], counts: ["56"],
+    links: ["twitch.tv/videos/2041837265"],
+    stats: [
+      { tag: "FOL", value: "1.2K", color: "#9147ff" },
+      { tag: "VWR", value: "042",  color: "#bf94ff" },
+    ],
   },
   {
-    id: "instagram", label: "LINKEDIN", handle: "@mael", href: "https://www.linkedin.com/in/mael-belhacene-89545b294/", icon: "💼", bars: 1, newBars: [0],
-    links: ["www.linkedin.com/in/mael-belhacene-89545b294/"],
+    id: "instagram", label: "INSTAGRAM", handle: "@yourhandle", href: "https://instagram.com/yourhandle", icon: "📷", barIcon: icon2, bars: 5, newBars: [1, 2], counts: ["3.4M", "2.5M", "676K", "412K", "198K"],
+    links: ["instagram.com/p/C4xQmRrNk2a", "instagram.com/p/C3wLpBsOj7f", "instagram.com/reel/C2vKoArMi6e", "instagram.com/p/C1uJnZqLh5d", "instagram.com/reel/C0tImYpKg4c"],
+    stats: [
+      { tag: "FOL", value: "3.4K", color: "#e1306c" },
+      { tag: "PST", value: "128",  color: "#f77737" },
+    ],
   },
   {
-    id: "tiktok", label: "CONTACT", handle: "@mael", href: "mailto:maelbelhacene38.pro@gmail.com", icon: "📨", bars: 1, newBars: [0],
-    links: ["mailto:maelbelhacene38.pro@gmail.com - Ouvert a toute collaboration commerciale"],
+    id: "tiktok", label: "TIKTOK", handle: "@yourhandle", href: "https://tiktok.com/@yourhandle", icon: "🎵", barIcon: icon3, bars: 7, newBars: [0, 3, 5, 6], counts: ["5.1M", "3.7M", "2.2M", "1.4M", "831K", "490K", "217K"],
+    links: ["tiktok.com/@yourhandle/video/7318492016374859054", "tiktok.com/@yourhandle/video/7305837261940183342", "tiktok.com/@yourhandle/video/7291046385720348974", "tiktok.com/@yourhandle/video/7278392047163820334", "tiktok.com/@yourhandle/video/7264819203847165742", "tiktok.com/@yourhandle/video/7251047382916430126", "tiktok.com/@yourhandle/video/7237294018463851822"],
+    stats: [
+      { tag: "FOL", value: "8.9K", color: "#00f2ea" },
+      { tag: "LKS", value: "52K",  color: "#ff0050" },
+    ],
   },
 ];
 
-export default function Socials({ lang = "fr" }) {
-  const locale = lang === "en" ? "en" : "fr";
-  const copy = SOCIALS_COPY[locale];
-  const localizedItems = useMemo(
-    () => ITEMS.map((item, index) => ({
-      ...item,
-      label: copy.labels[index],
-      links: item.id === "tiktok" ? [copy.contactLine] : item.links,
-    })),
-    [copy.labels, copy.contactLine],
-  );
+export default function Socials() {
   const [active, setActive]               = useState(0);
   const [mounted, setMounted]             = useState(false);
   const [activeInfoBar, setActiveInfoBar] = useState(0);
   const [focus, setFocus]                 = useState("left"); // "left" | "right"
   const navigate = useNavigate();
 
-  const resolveLink = (rawLink) => {
-    if (/^(https?:\/\/|mailto:)/i.test(rawLink)) return rawLink;
-    return "https://" + rawLink;
-  };
-
-  const formatInfoText = (text) => {
-    const maxLength = 64;
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
+  const isMobileViewport =
+    typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 60);
@@ -84,32 +64,28 @@ export default function Socials({ lang = "fr" }) {
     const onKey = (e) => {
       if (focus === "left") {
         if (e.key === "ArrowUp")    setActive(i => Math.max(0, i - 1));
-        if (e.key === "ArrowDown")  setActive(i => Math.min(localizedItems.length - 1, i + 1));
+        if (e.key === "ArrowDown")  setActive(i => Math.min(ITEMS.length - 1, i + 1));
         if (e.key === "ArrowRight") { setFocus("right"); setActiveInfoBar(0); }
-        if (e.key === "Enter")      window.open(resolveLink(localizedItems[active].href), "_blank", "noopener,noreferrer");
+        if (e.key === "Enter")      window.open(ITEMS[active].href, "_blank");
       } else {
-        const barCount = localizedItems[active].bars;
+        const barCount = ITEMS[active].bars;
         if (e.key === "ArrowUp")   setActiveInfoBar(i => Math.max(0, i - 1));
         if (e.key === "ArrowDown") setActiveInfoBar(i => Math.min(barCount - 1, i + 1));
         if (e.key === "ArrowLeft") setFocus("left");
-        if (e.key === "Enter")     window.open(resolveLink(localizedItems[active].links[activeInfoBar]), "_blank", "noopener,noreferrer");
+        if (e.key === "Enter")     window.open("https://" + ITEMS[active].links[activeInfoBar], "_blank");
       }
       if ((e.key === "ArrowLeft" && focus === "left") || e.key === "Escape" || e.key === "Backspace") navigate(-1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, activeInfoBar, navigate, focus, localizedItems]);
+  }, [active, navigate, focus]);
 
   return (
-    <div id="menu-screen" className="gto-social-screen">
-      <video src={bgVideo} autoPlay loop muted playsInline preload="auto" className="sc-bg-video" />
+    <div id="menu-screen">
+      <video src={bgVideo} autoPlay loop muted playsInline />
       <style>{`
-        .sc-bg-video {
-          object-position: center center;
-          filter: saturate(1.05) contrast(1.04) brightness(0.96);
-          transform: scale(1.01);
-          transform-origin: center;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,700;1,700&display=swap');
+
         .sc-root {
           position: absolute;
           inset: 0;
@@ -121,18 +97,6 @@ export default function Socials({ lang = "fr" }) {
           justify-content: center;
           gap: 6px;
           padding-left: 0;
-        }
-        .sc-root::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          background: repeating-linear-gradient(
-            -10deg,
-            rgba(255, 210, 48, 0.02) 0 8px,
-            rgba(0, 0, 0, 0) 8px 22px
-          );
-          mix-blend-mode: soft-light;
         }
 
         /* ── Each bar ── */
@@ -147,28 +111,14 @@ export default function Socials({ lang = "fr" }) {
           clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
           box-shadow: 0 6px 24px rgba(0,0,0,0.65);
           z-index: 1;
-          border: 1px solid rgba(255, 210, 48, 0.2);
         }
 
         /* wrapper holds both the red underlay and the bar */
         .sc-bar-outer {
           position: relative;
           flex-shrink: 0;
-          display: block;
-          text-align: left;
-          background: transparent;
-          border: 0;
-          padding: 0;
-          font: inherit;
           transform: translateX(-100%);
           transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .sc-bar-outer:focus-visible {
-          outline: 2px solid #ffd230;
-          outline-offset: 4px;
-        }
-        .sc-bar-outer:hover {
-          transform: translateX(4px);
         }
         .sc-bar-outer.active .sc-bar     { height: 90px; }
         .sc-bar-outer.active .sc-bar-red { height: 90px; }
@@ -183,7 +133,7 @@ export default function Socials({ lang = "fr" }) {
           top: 0; left: 0;
           width: 45vw;
           height: 64px;
-          background: #d32828;
+          background: #c4001a;
           clip-path: polygon(50% 0, 100% 0, 100% 100%, calc(50% - 10px) 100%);
           transform: translateY(-7px);
           opacity: 0;
@@ -198,7 +148,7 @@ export default function Socials({ lang = "fr" }) {
           position: absolute;
           inset: 0;
           width: 100%;
-          background: #ffd230;
+          background: #ffffff;
           clip-path: polygon(100% 0, 100% 0, calc(100% - 32px) 100%, calc(100% - 32px) 100%);
           transition: clip-path 0.35s cubic-bezier(0.22, 1, 0.36, 1);
           z-index: 0;
@@ -248,7 +198,7 @@ export default function Socials({ lang = "fr" }) {
           display: flex;
           align-items: center;
           flex-shrink: 0;
-          font-family: var(--gto-font-display);
+          font-family: 'Anton', sans-serif;
           font-size: 50px;
           letter-spacing: -2px;
           color: #ffffff;
@@ -256,7 +206,6 @@ export default function Socials({ lang = "fr" }) {
           user-select: none;
           line-height: 1;
           padding: 0 16px 0 8px;
-          -webkit-text-stroke: 1px rgba(0, 0, 0, 0.4);
         }
 
         /* left: icon + name centered in remaining space */
@@ -287,16 +236,15 @@ export default function Socials({ lang = "fr" }) {
         .sc-bar-outer.active .sc-icon { color: rgba(255,255,255,0.25); }
 
         .sc-label {
-          font-family: var(--gto-font-ui);
+          font-family: 'Bebas Neue', sans-serif;
           font-size: 28px;
           letter-spacing: 4px;
           line-height: 1;
-          color: rgba(255, 244, 204, 0.95);
+          color: rgba(255,255,255,0.85);
           transition: color 0.2s ease;
           user-select: none;
-          text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
         }
-        .sc-bar-outer.active .sc-label { color: #181818; }
+        .sc-bar-outer.active .sc-label { color: #111111; }
 
         /* lb/rb nav row */
         @keyframes sc-arrow-left {
@@ -311,7 +259,7 @@ export default function Socials({ lang = "fr" }) {
           font-family: 'Bebas Neue', sans-serif;
           font-size: 12px;
           letter-spacing: 2px;
-          color: #ffd230;
+          color: #111;
           border: 1px solid rgba(0,0,0,0.35);
           padding: 1px 7px;
           line-height: 1.5;
@@ -319,11 +267,72 @@ export default function Socials({ lang = "fr" }) {
         }
         .sc-nav-arrow {
           font-size: 12px;
-          color: #d32828;
+          color: #c4001a;
           display: inline-block;
         }
         .sc-nav-arrow.left  { animation: sc-arrow-left  0.8s ease-in-out infinite; }
         .sc-nav-arrow.right { animation: sc-arrow-right 0.8s ease-in-out infinite; }
+
+        /* right: stats group */
+        .sc-stats {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding-right: 24px;
+          flex-shrink: 0;
+        }
+
+        .sc-stat {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .sc-stat-top {
+          display: flex;
+          align-items: baseline;
+          gap: 4px;
+        }
+
+        .sc-stat-tag {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 9px;
+          letter-spacing: 1.5px;
+          padding: 1px 4px;
+          border-width: 1px;
+          border-style: solid;
+          line-height: 1.4;
+          user-select: none;
+        }
+
+        .sc-stat-num {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 26px;
+          font-style: italic;
+          line-height: 1;
+          color: #ffffff;
+          letter-spacing: 1px;
+          user-select: none;
+          transition: color 0.2s ease;
+        }
+        .sc-bar-outer.active .sc-stat-num { color: #111111; }
+
+        .sc-stat-bars {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 1px;
+          margin-top: 2px;
+        }
+        .sc-stat-bar-color {
+          height: 3px;
+          width: 100%;
+        }
+        .sc-stat-bar-black {
+          height: 2px;
+          width: 100%;
+          background: #000;
+        }
 
         /* character portrait */
         .sc-char {
@@ -358,7 +367,7 @@ export default function Socials({ lang = "fr" }) {
           animation: sc-right-nav-pop 0.38s cubic-bezier(0.22,1,0.36,1) both;
         }
         .sc-right-nav .sc-nav-btn {
-          font-family: var(--gto-font-ui);
+          font-family: 'Bebas Neue', sans-serif;
           font-size: 100px;
           letter-spacing: 3px;
           line-height: 1;
@@ -371,57 +380,61 @@ export default function Socials({ lang = "fr" }) {
           padding: 0 6px;
         }
         .sc-right-nav .sc-nav-label {
-          font-family: var(--gto-font-ui);
+          font-family: 'Bebas Neue', sans-serif;
           font-size: 28px;
           letter-spacing: 3px;
           line-height: 1;
           user-select: none;
-          color: #ffd230;
+          color: #111;
           padding: 0 8px;
         }
         .sc-right-nav .sc-nav-arrow {
           font-family: 'Bebas Neue', sans-serif;
           font-size: 22px;
-          color: #d32828;
+          color: #c4001a;
           display: inline-block;
           user-select: none;
         }
         .sc-right-nav .sc-nav-arrow.left  { animation: sc-arrow-left  0.8s ease-in-out infinite; }
         .sc-right-nav .sc-nav-arrow.right { animation: sc-arrow-right 0.8s ease-in-out infinite; }
 
-        /* info bar under nav */
+        /* info panel */
+        .sc-info-panel {
+          position: fixed;
+          top: 132px;
+          right: 0;
+          left: 65%;
+          bottom: 84px;
+          z-index: 50;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          padding: 8px 8px 8px 0;
+          overflow-y: auto;
+          overflow-x: hidden;
+          pointer-events: none;
+        }
+
         @keyframes sc-infobar-in {
           0%   { opacity: 0; transform: translateX(40px); }
           60%  { opacity: 1; transform: translateX(-4px); }
           100% { opacity: 1; transform: translateX(0); }
         }
         .sc-info-bar-wrap {
-          position: fixed;
-          right: 0;
-          left: 65%;
-          top: calc(155px + (var(--info-index) * 52px));
+          position: relative;
+          right: auto;
+          left: auto;
+          width: 100%;
           height: 46px;
-          display: block;
-          text-align: left;
           background: transparent;
-          border: 0;
           pointer-events: all;
           cursor: pointer;
-          z-index: 50;
+          z-index: 1;
           padding: 0;
-          font: inherit;
           animation: sc-infobar-in 0.35s cubic-bezier(0.22,1,0.36,1) both;
-          transition: transform 0.18s ease;
-        }
-        .sc-info-bar-wrap:focus-visible {
-          outline: 2px solid #ffd230;
-          outline-offset: 4px;
-        }
-        .sc-info-bar-wrap:hover {
-          transform: translateX(-4px);
         }
         .sc-info-bar-wrap.selected {
-          background: #1a1a1a;
+          background: #111;
           padding: 1.5px;
           border-radius: 8px;
         }
@@ -435,7 +448,7 @@ export default function Socials({ lang = "fr" }) {
           overflow: hidden;
         }
         .sc-info-bar-wrap.selected .sc-info-bar {
-          background: #fff4cc;
+          background: #fff;
           border-radius: 7px;
         }
         .sc-info-bar-new {
@@ -452,7 +465,7 @@ export default function Socials({ lang = "fr" }) {
           position: absolute;
           top: 0; left: 0; right: 0;
           height: 4px;
-          background: #d32828;
+          background: #c4001a;
           z-index: 1;
         }
         .sc-info-bar-text {
@@ -464,6 +477,42 @@ export default function Socials({ lang = "fr" }) {
           padding: 0 14px;
           user-select: none;
         }
+        .sc-info-bar-box {
+          height: 70%;
+          background: #000;
+          display: flex;
+          align-items: center;
+          padding: 0 12px;
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 20px;
+          letter-spacing: 1px;
+          color: #fff;
+          flex-shrink: 0;
+          border-radius: 6px;
+          margin-right: 4px;
+          user-select: none;
+        }
+
+        .sc-info-bar-icon {
+          height: 55%;
+          width: auto;
+          flex-shrink: 0;
+          margin-left: 14px;
+          object-fit: contain;
+          pointer-events: none;
+          user-select: none;
+        }
+
+        .sc-info-bar-count {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 22px;
+          letter-spacing: 1px;
+          color: #111;
+          margin-right: 80px;
+          flex-shrink: 0;
+          user-select: none;
+        }
+
         /* footer hints */
         .sc-footer {
           position: fixed;
@@ -479,118 +528,89 @@ export default function Socials({ lang = "fr" }) {
         .sc-footer-row {
           display: flex; align-items: center; gap: 8px;
           font-size: 13px; letter-spacing: 2px;
-          color: rgba(255, 244, 204, 0.5);
+          color: rgba(255,255,255,0.22);
         }
         .sc-footer-key {
-          border: 1px solid rgba(255, 210, 48, 0.35);
+          border: 1px solid rgba(255,255,255,0.15);
           border-radius: 3px;
           padding: 1px 6px; font-size: 11px;
         }
 
-        .gto-social-screen::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 11;
-          background: repeating-linear-gradient(
-            -12deg,
-            rgba(255, 210, 48, 0.03) 0 10px,
-            rgba(0, 0, 0, 0) 10px 26px
-          );
-          mix-blend-mode: soft-light;
+        .sc-mobile-controls {
+          display: none;
         }
 
-        @media (max-width: 1024px) {
-          .sc-bar,
-          .sc-bar-red {
-            width: 58vw;
-          }
-          .sc-char {
-            left: 74px;
-            max-width: 122px;
-          }
-          .sc-right-nav .sc-nav-btn {
-            font-size: 72px;
-          }
-          .sc-right-nav .sc-nav-label {
-            font-size: 20px;
-          }
-          .sc-info-bar-wrap {
-            left: 52%;
-          }
+        .sc-mobile-btn {
+          border: 1px solid rgba(255, 255, 255, 0.28);
+          background: rgba(0, 0, 0, 0.62);
+          color: #fff;
+          font-family: 'Bebas Neue', sans-serif;
+          letter-spacing: 1.2px;
+          font-size: 13px;
+          padding: 7px 12px;
+          border-radius: 8px;
+          min-width: 84px;
         }
 
         @media (max-width: 768px) {
           .sc-root {
             justify-content: flex-start;
-            padding-top: 15vh;
-            gap: 4px;
+            padding-top: 12px;
+            gap: 3px;
           }
-          .sc-bar,
-          .sc-bar-red {
-            width: 92vw;
-            height: 56px;
-          }
-          .sc-bar-outer.active .sc-bar,
-          .sc-bar-outer.active .sc-bar-red {
-            height: 68px;
-          }
-          .sc-char {
-            display: none;
-          }
-          .sc-role {
-            font-size: 32px;
-            padding-left: 4px;
-          }
-          .sc-label {
-            font-size: 22px;
-            letter-spacing: 2px;
-          }
-          .sc-main {
-            align-items: flex-start;
-          }
-          .sc-right-nav {
-            top: 8px;
+
+          .sc-info-panel {
+            top: min(47vh, 320px);
+            left: 8px;
             right: 8px;
-            transform: scale(0.68);
-            transform-origin: top right;
+            bottom: 58px;
+            gap: 4px;
+            padding: 4px 0;
           }
+
           .sc-info-bar-wrap {
-            top: auto !important;
-            left: 10%;
-            right: 2%;
-            bottom: calc(118px + (var(--info-index) * 42px));
-            height: 38px;
+            height: 38px !important;
           }
+
           .sc-info-bar-text {
             font-size: 15px;
             letter-spacing: 1px;
-            padding: 0 8px;
           }
+
+          .sc-info-bar-count {
+            margin-right: 10px;
+            font-size: 14px;
+          }
+
           .sc-footer {
+            display: none;
+          }
+
+          .sc-mobile-controls {
+            position: fixed;
+            left: 8px;
             right: 8px;
-            bottom: 8px;
-            transform: scale(0.9);
-            transform-origin: bottom right;
+            bottom: max(8px, env(safe-area-inset-bottom));
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            pointer-events: all;
           }
         }
       `}</style>
 
       <div className="sc-root" role="navigation">
-        {localizedItems.map((item, i) => (
-          <button
-            type="button"
+        {ITEMS.map((item, i) => (
+          <div
             key={item.id}
             className={`sc-bar-outer${active === i ? " active" : ""}${mounted ? " mounted" : ""}`}
             onClick={() => {
-              if (active === i) window.open(item.href, "_blank", "noopener,noreferrer");
+              if (active === i) window.open(item.href, "_blank");
               else setActive(i);
             }}
             onMouseEnter={() => setActive(i)}
-            onFocus={() => setActive(i)}
-            aria-label={active === i ? `${copy.itemOpen} ${item.label}` : `${copy.itemSelect} ${item.label}`}
-            aria-pressed={active === i}
           >
             <div className="sc-bar-red" />
             <div className="sc-bar">
@@ -605,9 +625,23 @@ export default function Socials({ lang = "fr" }) {
                     <div className="sc-label">{item.label}</div>
                   </div>
                 </div>
+                <div className="sc-stats">
+                  {item.stats.map(s => (
+                    <div className="sc-stat" key={s.tag}>
+                      <div className="sc-stat-top">
+                        <span className="sc-stat-tag" style={{ color: s.color, borderColor: s.color }}>{s.tag}</span>
+                        <span className="sc-stat-num">{s.value}</span>
+                      </div>
+                      <div className="sc-stat-bars">
+                        <div className="sc-stat-bar-color" style={{ background: s.color }} />
+                        <div className="sc-stat-bar-black" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </button>
+          </div>
         ))}
       </div>
 
@@ -615,37 +649,59 @@ export default function Socials({ lang = "fr" }) {
         <div className="sc-right-nav" key={active}>
           <span className="sc-nav-arrow left">◄</span>
           <span className="sc-nav-btn">LB</span>
-          <span className="sc-nav-label">{localizedItems[active].label}</span>
+          <span className="sc-nav-label">{ITEMS[active].label}</span>
           <span className="sc-nav-btn">RB</span>
           <span className="sc-nav-arrow right">►</span>
         </div>
       )}
 
-      {mounted && Array.from({ length: localizedItems[active].bars }).map((_, i) => (
-        <button
-          type="button"
-          className={`sc-info-bar-wrap${activeInfoBar === i ? " selected" : ""}`}
-          key={`bar-${active}-${i}`}
-          style={{ "--info-index": i, animationDelay: `${i * 50}ms` }}
-          onClick={() => setActiveInfoBar(i)}
-          onMouseEnter={() => setActiveInfoBar(i)}
-          onFocus={() => setActiveInfoBar(i)}
-          aria-label={`${copy.selectLink} ${i + 1} ${locale === "fr" ? "de" : "for"} ${localizedItems[active].label}`}
-          aria-pressed={activeInfoBar === i}
-        >
-          {localizedItems[active].newBars.includes(i) && (
-            <img className="sc-info-bar-new" src={newsign} alt="" />
-          )}
-          <div className="sc-info-bar">
-            <span className="sc-info-bar-text">{formatInfoText(localizedItems[active].links[i])}</span>
-          </div>
-        </button>
-      ))}
+      {mounted && (
+        <div className="sc-info-panel" key={`panel-${active}`}>
+          {Array.from({ length: ITEMS[active].bars }).map((_, i) => (
+            <div
+              className={`sc-info-bar-wrap${activeInfoBar === i ? " selected" : ""}`}
+              key={`bar-${active}-${i}`}
+              style={{ animationDelay: `${i * 50}ms` }}
+              onClick={() => {
+                if (isMobileViewport || activeInfoBar === i) {
+                  window.open("https://" + ITEMS[active].links[i], "_blank");
+                  return;
+                }
+                setActiveInfoBar(i);
+              }}
+              onMouseEnter={() => setActiveInfoBar(i)}
+            >
+              {ITEMS[active].newBars.includes(i) && (
+                <img className="sc-info-bar-new" src={newsign} alt="" />
+              )}
+              <div className="sc-info-bar">
+                <img className="sc-info-bar-icon" src={ITEMS[active].barIcon} alt="" />
+                <span className="sc-info-bar-text">{ITEMS[active].links[i].slice(0, 10)}...</span>
+                <span className="sc-info-bar-box">VIEWS</span>
+                <span className="sc-info-bar-count">{ITEMS[active].counts[i]}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className={`sc-footer${mounted ? " mounted" : ""}`}>
-        <div className="sc-footer-row"><span className="sc-footer-key">↑↓</span><span>{copy.footer.select}</span></div>
-        <div className="sc-footer-row"><span className="sc-footer-key">↵</span><span>{copy.footer.open}</span></div>
-        <div className="sc-footer-row"><span className="sc-footer-key">ESC</span><span>{copy.footer.back}</span></div>
+        <div className="sc-footer-row"><span className="sc-footer-key">↑↓</span><span>SELECT</span></div>
+        <div className="sc-footer-row"><span className="sc-footer-key">↵</span><span>OPEN</span></div>
+        <div className="sc-footer-row"><span className="sc-footer-key">ESC</span><span>BACK</span></div>
+      </div>
+
+      <div className="sc-mobile-controls" aria-label="Socials mobile controls">
+        <button className="sc-mobile-btn" type="button" onClick={() => navigate(-1)}>
+          BACK
+        </button>
+        <button
+          className="sc-mobile-btn"
+          type="button"
+          onClick={() => window.open(ITEMS[active].href, "_blank")}
+        >
+          OPEN
+        </button>
       </div>
     </div>
   );
