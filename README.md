@@ -1,4 +1,4 @@
-Persona Personal Website
+# Persona Personal Website
 
 A Persona-inspired personal portfolio website.
 
